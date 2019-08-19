@@ -124,3 +124,18 @@ def delete_author(request):
     author_id = request.GET.get('id')
     Author.objects.get(id=author_id).delete()
     return redirect('/author_list/')
+
+
+def edit_author(request):
+    """编辑作者"""
+    edit_author_id = request.GET.get('id')  # 获取需要编辑的作者id
+    auth_obj = Author.objects.get(id=edit_author_id)
+    if request.method == 'POST':
+        edit_author_name = request.POST.get('edit_author_name')  # 获取编辑后的作者名称
+        edit_book_ids = request.POST.getlist('book_ids')   # 获取需要编辑的书籍id
+        auth_obj.name = edit_author_name
+        auth_obj.books.set(edit_book_ids)
+        auth_obj.save()  # 保存提交数据
+        return redirect('/author_list/')
+    books = Book.objects.all()
+    return render(request, 'edit_author.html', {'author_list': auth_obj, 'books': books})
