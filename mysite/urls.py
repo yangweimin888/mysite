@@ -32,5 +32,6 @@ urlpatterns = [
     path('author_list/', views.author_list),  # 作者列表
     path('add_author/', views.add_author),  # 添加作者
     path('delete_author/', views.delete_author),  # 删除作者
-    path('edit_author/', views.edit_author)  # 编辑作者
+    path('edit_author/', views.edit_author),  # 编辑作者
+    path('upload/', views.upload),  # 上传文件
 ]

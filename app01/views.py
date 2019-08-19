@@ -1,5 +1,8 @@
 from django.shortcuts import render, redirect
 from app01.models import User, Press, Book, Author
+from django.conf import settings
+import os
+import time
 
 
 def login(request):
@@ -139,3 +142,16 @@ def edit_author(request):
         return redirect('/author_list/')
     books = Book.objects.all()
     return render(request, 'edit_author.html', {'author_list': auth_obj, 'books': books})
+
+
+def upload(request):
+    """上传文件"""
+    if request.method == 'POST':
+        file_obj = request.FILES.get('file_name')
+        file_name = file_obj.name
+        if os.path.exists(os.path.join(settings.BASE_DIR, file_name)):
+            file_name += time.strftime('%Y-%m-%d')  # 如果文件存在重复，则增加时间戳
+        with open(file_name, 'wb') as f:
+            for chunk in file_obj.chunks():
+                f.write(chunk)
+    return render(request, 'upload.html')
