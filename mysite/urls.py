@@ -34,4 +34,5 @@ urlpatterns = [
     path('delete_author/', views.delete_author),  # 删除作者
     path('edit_author/', views.edit_author),  # 编辑作者
     path('upload/', views.upload),  # 上传文件
+    path('get_book/', views.get_book)  # 获取书籍信息
 ]
