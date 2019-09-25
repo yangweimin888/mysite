@@ -1,3 +1,4 @@
+from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from app01.models import User, Press, Book, Author
 from django.conf import settings
@@ -155,3 +156,21 @@ def upload(request):
             for chunk in file_obj.chunks():
                 f.write(chunk)
     return render(request, 'upload.html')
+
+
+def get_book(request):
+    """关联书籍表和出版社表查询数据"""
+    books = Book.objects.all()
+    books_list = []
+    for book in books:
+        press = Press.objects.get(id=book.press_id)
+        books_list.append(
+            {
+                'id': book.id,
+                'title': book.title,
+                'press_name': press.name,
+                'price': book.price
+            }
+        )
+
+    return JsonResponse(books_list, safe=False)
