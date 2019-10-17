@@ -1,5 +1,5 @@
 from django.http import JsonResponse, HttpResponse
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, reverse
 from app01.models import User, Press, Book, Author
 from django.conf import settings
 import os
@@ -52,7 +52,7 @@ def delete_press(request, delete_id):
     """删除出版社"""
     # delete_id = request.GET.get('id')
     Press.objects.get(id=delete_id).delete()  # 根据出版社id删除对应的数据
-    return redirect('/press_list/')
+    return redirect(reverse('press_list'))
 
 
 # def add_press(request):
@@ -214,7 +214,7 @@ class AddPress(View):
     def post(request):
         add_name = request.POST.get('name')
         Press.objects.create(name=add_name)  # 将新增的出版社名称保存到数据库中
-        return redirect('/press_list/')
+        return redirect(reverse('press_list'))
 
 
 def test(request):

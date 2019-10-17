@@ -8,7 +8,7 @@ from . import views
 urlpatterns = [
     path('login/', views.login),
     path('index/', views.index),
-    path('press_list/', views.press_list),  # 出版社列表
+    path('press/', views.press_list, name='press_list'),  # 出版社列表
     path('edit_press/<int:edit_id>/', views.edit_press),  # 编辑出版社
     path('delete_press/<int:delete_id>/', views.delete_press),  # 删除出版社
     path('add_press/', views.AddPress.as_view()),  # 新增出版社
