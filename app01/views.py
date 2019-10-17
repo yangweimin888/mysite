@@ -1,9 +1,11 @@
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, redirect
 from app01.models import User, Press, Book, Author
 from django.conf import settings
 import os
 import time
+from django.views import View
+from django.utils.decorators import method_decorator
 
 
 def login(request):
@@ -33,9 +35,9 @@ def press_list(request):
     return render(request, 'press_list2.html', {'ret': ret})
 
 
-def edit_press(request):
+def edit_press(request, edit_id):
     """编辑出版社"""
-    edit_id = request.GET.get('id')  # 获取需要操作的出版社id
+    # edit_id = request.GET.get('id')  # 获取需要操作的出版社id
     if request.method == 'POST':
         edit_name = request.POST.get('edit_name')
         edit_press_obj = Press.objects.get(id=edit_id)
@@ -46,20 +48,20 @@ def edit_press(request):
     return render(request, 'edit_press2.html', {'press_obj': ret})
 
 
-def delete_press(request):
+def delete_press(request, delete_id):
     """删除出版社"""
-    delete_id = request.GET.get('id')
+    # delete_id = request.GET.get('id')
     Press.objects.get(id=delete_id).delete()  # 根据出版社id删除对应的数据
     return redirect('/press_list/')
 
 
-def add_press(request):
-    """增加出版社"""
-    if request.method == 'POST':
-        add_name = request.POST.get('add_name')
-        Press.objects.create(name=add_name)  # 将新增的出版社名称保存到数据库中
-        return redirect('/press_list/')
-    return render(request, 'add_press2.html')
+# def add_press(request):
+#     """增加出版社"""
+#     if request.method == 'POST':
+#         add_name = request.POST.get('add_name')
+#         Press.objects.create(name=add_name)  # 将新增的出版社名称保存到数据库中
+#         return redirect('/press_list/')
+#     return render(request, 'add_press2.html')
 
 
 def book_list(request):
@@ -174,3 +176,52 @@ def get_book(request):
         )
 
     return JsonResponse(books_list, safe=False)
+
+
+def test_custom_filter(request):
+    """
+    测试自定义过滤器
+    :param request:
+    :return:
+    """
+    str_name = '你好，'
+    return render(request, 'custom_filter.html', {'name': str_name})
+
+
+def timmer(fun):
+    def inner(*args, **kwargs):
+        start_time = time.time()
+        ret = fun(*args, **kwargs)
+        stop_time = time.time()
+        spend_time = stop_time - start_time
+        print(spend_time)
+        return ret
+    return inner
+
+
+class AddPress(View):
+
+    @method_decorator(timmer)
+    def dispatch(self, request, *args, **kwargs):
+        result = super().dispatch(request, *args, **kwargs)
+        return result
+
+    @staticmethod
+    def get(request):
+        return render(request, 'add_press2.html')
+
+    @staticmethod
+    def post(request):
+        add_name = request.POST.get('name')
+        Press.objects.create(name=add_name)  # 将新增的出版社名称保存到数据库中
+        return redirect('/press_list/')
+
+
+def test(request):
+    print(request)
+    return HttpResponse('我是小杨')
+
+
+def home(request, year):
+    print(year)
+    return HttpResponse('OK')
